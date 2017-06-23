@@ -1,4 +1,8 @@
-# get Coordinates from Street Address
+# get Sreet Adress
+streetOnly <- summarise(group_by(df, STRASSE), PLZ = max(PLZ))
+streetOnly <- streetOnly[-1,]
+
+# Function: get Coordinates from Street Address
 
 geocodeAdddress <- function(address) {
   require(RJSONIO)
@@ -14,3 +18,14 @@ geocodeAdddress <- function(address) {
   Sys.sleep(0.2)  # API only allows 5 requests per second
   out
 }
+
+# Loop to get functions
+streetOnly$lng <- NA
+streetOnly$lat <- NA
+
+for (i in 1:nrow(streetOnly)){
+  request <- paste(streetOnly[i, 1], streetOnly[i, 2], "Berlin")
+  streetOnly[i,c(3,4)] <- t(geocodeAdddress(request))
+}
+
+
