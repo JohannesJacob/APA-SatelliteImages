@@ -1,5 +1,5 @@
 # get Sreet Adress
-streetOnly <- summarise(group_by(df, STRASSE), PLZ = max(PLZ))
+streetOnly <- summarise(group_by(df, STRASSE, PLZ, WOL))
 streetOnly <- streetOnly[-1,]
 
 # Function: get Coordinates from Street Address
