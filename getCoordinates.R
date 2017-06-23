@@ -19,7 +19,7 @@ geocodeAdddress <- function(address) {
   out
 }
 
-# Loop to get functions
+# Loop to get functions CAREFUL: Google requests
 streetOnly$lng <- NA
 streetOnly$lat <- NA
 
