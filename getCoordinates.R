@@ -25,7 +25,7 @@ streetOnly$lat <- NA
 
 for (i in 1:nrow(streetOnly)){
   request <- paste(streetOnly[i, 1], streetOnly[i, 2], "Berlin")
-  streetOnly[i,c(3,4)] <- t(geocodeAdddress(request))
+  streetOnly[i,c("lng","lat")] <- t(geocodeAdddress(request))
 }
 
 
