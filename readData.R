@@ -4,12 +4,12 @@
 library(dplyr)
 
 # read data
-path <- "C:/Users/Benjamin/OneDrive/APA"
+path <- "C:/Users/Johannes/OneDrive/APA"
 
 df <- read.csv(paste0(path, "/1. Data Sets/Immo_Daten/Berlin__Wohnlagen_2015.csv"), encoding = "UTF-8")
 
 # data cleaning
-df > 
+summarise(group_by(df, STRASSE), levels(WOL)) 
 
 # get exxact Coordinates
 source("getCoordinates")
