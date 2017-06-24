@@ -9,13 +9,16 @@ path <- "C:/Users/Johannes/OneDrive/APA"
 df <- read.csv(paste0(path, "/1. Data Sets/Immo_Daten/Berlin__Wohnlagen_2015.csv"), encoding = "UTF-8")
 
 # data cleaning
-df$WOL <- as.factor(df$WOL)
-# drop 3 rows with missing value for WOL
-df2 <- df[-(which(df$WOL == '')),]
-# drop unused level
-df2$WOL <- droplevels(df2$WOL)
+  df$WOL <- as.factor(df$WOL)
+  #get house#s without letter specification
+  df$ADR_noletters <- as.integer(gsub("[^0-9]", "", df$ADR))
+  
+  # drop 3 rows with missing value for WOL
+  df2 <- df[-(which(df$WOL == '')),]
+  # drop unused level
+  df2$WOL <- droplevels(df2$WOL)
 
-# get exxact Coordinates
+# get exact Coordinates
 source("getCoordinates")
 geocodeAdddress("Motzstr 10777 Berlin")
 

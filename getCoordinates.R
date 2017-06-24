@@ -1,13 +1,16 @@
 # get Sreet Adress
-streetOnly <- summarise(group_by(df, STRASSE, PLZ, WOL))
-streetOnly <- streetOnly[-1,]
+streetOnly <- df2 %>% 
+                  group_by(STRASSE, PLZ, WOL)%>%
+                  summarise(NMBR = round(median(ADR_noletters, na.rm = T))) %>% 
+                  as.data.frame()
 
 # Function: get Coordinates from Street Address
 
 geocodeAdddress <- function(address) {
   require(RJSONIO)
   url <- "http://maps.google.com/maps/api/geocode/json?address="
-  url <- URLencode(paste(url, address, "&sensor=false", sep = ""))
+  url <- URLencode(paste(url, address,"&sensor=false", sep = ""))
+  #embedding API: https://stackoverflow.com/questions/34402979/increase-the-api-limit-in-ggmaps-geocode-function-in-r
   x <- fromJSON(url, simplify = FALSE)
   if (x$status == "OK") {
     out <- c(x$results[[1]]$geometry$location$lng,
@@ -24,7 +27,7 @@ streetOnly$lng <- NA
 streetOnly$lat <- NA
 
 for (i in 1:nrow(streetOnly)){
-  request <- paste(streetOnly[i, 1], streetOnly[i, 2], "Berlin")
+  request <- paste(streetOnly[i, 1], streetOnly[i, 4], streetOnly[i, 2], "Berlin")
   streetOnly[i,c("lng","lat")] <- t(geocodeAdddress(request))
 }
 
