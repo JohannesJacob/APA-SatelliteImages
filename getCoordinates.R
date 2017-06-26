@@ -8,8 +8,8 @@ streetOnly <- df2 %>%
 
 geocodeAdddress <- function(address) {
   require(RJSONIO)
-  url <- "http://maps.google.com/maps/api/geocode/json?address="
-  url <- URLencode(paste(url, address,"&sensor=false", sep = ""))
+  url <- "https://maps.google.com/maps/api/geocode/json?address="
+  url <- URLencode(paste(url, address, "&key=AIzaSyB8FFsYpfZgTz4mHVaSBHyB2y8l9HBKIb8", sep = ""))
   #embedding API: https://stackoverflow.com/questions/34402979/increase-the-api-limit-in-ggmaps-geocode-function-in-r
   x <- fromJSON(url, simplify = FALSE)
   if (x$status == "OK") {
@@ -26,9 +26,9 @@ geocodeAdddress <- function(address) {
 streetOnly$lng <- NA
 streetOnly$lat <- NA
 
-for (i in 1:nrow(streetOnly)){
+for (i in 7501:10000){
   request <- paste(streetOnly[i, 1], streetOnly[i, 4], streetOnly[i, 2], "Berlin")
   streetOnly[i,c("lng","lat")] <- t(geocodeAdddress(request))
 }
 
-
+write.csv(streetOnly, "streetCoordinates.csv", row.names = F, dec = ".")

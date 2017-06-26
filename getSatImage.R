@@ -1,11 +1,12 @@
 # getting satelite image
 library(ggmap)
 
-mapImageData1 <- get_map(location = c(lon = 34.93809275, lat = -9.85632177),
+mapImageData1 <- get_map(location = c(lon = 13.50132
+                                      , lat = 52.52598),
                          color = "color",
                          source = "google",
                          maptype = "satellite",
-                         zoom = 16
+                         zoom = 21
                          )
 
 ggmap(mapImageData1,
