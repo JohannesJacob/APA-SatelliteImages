@@ -6,7 +6,7 @@ mapImageData1 <- get_map(location = c(lon = 13.50132
                          color = "color",
                          source = "google",
                          maptype = "satellite",
-                         zoom = 21
+                         zoom = 15
                          )
 
 ggmap(mapImageData1,
@@ -14,4 +14,13 @@ ggmap(mapImageData1,
       ylab = "Latitude",
       xlab = "Longitude")
 
+#extract plot
+m <- as.matrix(mapImageData1)
 
+#check plot extraction
+plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+usr <- par("usr")
+rasterImage(m, usr[1], usr[3], usr[2], usr[4])
+
+# convert hey to rgb
+col2gb()
