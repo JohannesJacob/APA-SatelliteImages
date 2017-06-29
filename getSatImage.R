@@ -22,5 +22,5 @@ plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
 usr <- par("usr")
 rasterImage(m, usr[1], usr[3], usr[2], usr[4])
 
-# convert hey to rgb
+# convert hex to rgb
 col2gb()
