@@ -7,7 +7,7 @@ library(ggplot2)
 streetOnly$lineID <- seq(1, nrow(streetOnly), by = 1)
 
 #for loop
-for (i in 1655:2200) {
+for (i in 12064:12207) {
   longitude     <- streetOnly$lng[i]
   latitude      <- streetOnly$lat[i]
   
