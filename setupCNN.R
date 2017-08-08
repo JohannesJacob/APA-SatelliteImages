@@ -5,10 +5,11 @@ library(tensorflow)
 library(keras)
 
 # File locations and settings --------------------------------------------------
-train_directory <- "C:/Users/Johannes/Documents/SatelliteImages/train"
-validation_directory <- "C:/Users/Johannes/Documents/SatelliteImages/validation"
-train_samples <- 9647
-validation_samples <- 2404
+## TEST directory
+train_directory <- "C:/Users/Johannes/Documents/TestImages/train"
+validation_directory <- "C:/Users/Johannes/Documents/TestImages/validation"
+#train_samples <- 9647
+#validation_samples <- 2404
 
 #Loading images ----------------------------------------------------------------
 train_generator <- flow_images_from_directory(directory = train_directory, 
@@ -47,7 +48,7 @@ model %>% compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy')
 # Training ---------------------------------------------------------------------
 
 # train the model on the new data for a few epochs
-model %>% fit_generator(train_generator, steps_per_epoch = 1)
+model %>% fit_generator(train_generator, steps_per_epoch = 20)
 
 # at this point, the top layers are well trained and we can start fine-tuning
 # convolutional layers from ResNet. We will freeze the bottom N layers
@@ -75,22 +76,17 @@ model %>% compile(
 
 # we train our model again (this time fine-tuning the top 2 inception blocks
 # alongside the top Dense layers
-model %>% fit_generator(train_generator, steps_per_epoch = 1)
+tensorboard("logs/run_a")
+history <- model %>% fit_generator(train_generator, steps_per_epoch = 20)
 
 
 # Saving the model results
 save_model_weights_hdf5(model, "finetuning_1epoch_ResNet.h5", overwrite = T)
 
-# Testing
+# Testing ----------------------------------------------------------------------
 
 # Evaluating on validation set 
-evaluate_generator(model,validation_generator, validation_samples)
-
-
-
-
-
-
+res <- evaluate_generator(model,validation_generator, validation_samples) # validation sample in test =34
 
 
 
