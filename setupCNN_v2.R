@@ -64,4 +64,20 @@ model_top %>% compile(
   optimizer = optimizer_rmsprop(lr = 0.0001, decay = 1e-6),
   metrics = "accuracy")
 
+# Training ---------------------------------------------------------------------
+
+valid = list(bottleneck_features_validation, validation_labels)
+model_top %>% fit(
+  x = bottleneck_features_train, y = train_labels,
+  epochs=epochs, 
+  batch_size=16,  ##Hit out of memory with a batch size of 32
+  validation_data=valid,
+  verbose=2)
+
+save_model_weights_hdf5(model_top, 'models/bottleneck_30_epochsR.h5', overwrite = TRUE)
+
+# Validation -------------------------------------------------------------------
+
+evaluate(model_top,bottleneck_features_validation, validation_labels)
+
 

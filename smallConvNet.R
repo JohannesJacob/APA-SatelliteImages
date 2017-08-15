@@ -6,8 +6,8 @@ library(keras)
 
 # File locations and settings --------------------------------------------------
 ## TEST directory
-train_directory <- "C:/Users/Johannes/Documents/SatelliteImages/train"
-validation_directory <- "C:/Users/Johannes/Documents/SatelliteImages/validation"
+train_directory <- "C:/Users/Johannes/Documents/TestImages/train"
+validation_directory <- "C:/Users/Johannes/Documents/TestImages/validation"
 train_samples <- 9647
 validation_samples <- 2404
 batch_size <- 32
