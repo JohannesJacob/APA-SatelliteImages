@@ -8,8 +8,15 @@ library(keras)
 ## TEST directory
 train_directory <- "C:/Users/Johannes/Documents/TestImages/train"
 validation_directory <- "C:/Users/Johannes/Documents/TestImages/validation"
-train_samples <- 9647
-validation_samples <- 2404
+nfile <- function(path = train_directory, y) {length(list.files(paste0(path,y)))}
+train_labels = c(rep(0,nfile(y="/einfach")),
+                 rep(1,nfile(y="/gut")), 
+                 rep(2,nfile(y="/mittel")))
+validation_labels = c(rep(0,nfile(validation_directory,y="/einfach")),
+                      rep(1,nfile(validation_directory,y="/gut")), 
+                      rep(2,nfile(validation_directory,y="/mittel")))
+train_samples <- length(train_labels)
+validation_samples <- length(validation_labels)
 batch_size <- 32
 epochs <- 30
 
@@ -33,20 +40,19 @@ validation_generator_bottleneck <- flow_images_from_directory(validation_directo
 
 # Saving output of transfer learning model -------------------------------------
 
-bottleneck_features_train <- predict_generator(model_vgg,train_generator_bottleneck, 
-                                               train_samples / batch_size)
+bottleneck_features_train <- predict_generator(model_vgg,
+                                               train_generator_bottleneck, 1)
+                                               #train_samples / batch_size)
 saveRDS(bottleneck_features_train, "models/bottleneck_features_train.rds") #check SAVInG location
 bottleneck_features_validation <- predict_generator(model_vgg,
-                                                    validation_generator_bottleneck, 
-                                                    validation_samples / batch_size)
+                                                    validation_generator_bottleneck, 1) 
+                                                    #validation_samples / batch_size)
 saveRDS(bottleneck_features_validation, "models/bottleneck_features_validation.rds")
 
 # Loading saved transfer learning output ---------------------------------------
 
 bottleneck_features_train <- readRDS("models/bottleneck_features_train.rds")
 bottleneck_features_validation <- readRDS("models/bottleneck_features_validation.rds")
-train_labels = c(rep(0,train_samples/3),rep(1,train_samples/3), rep(2,train_samples/3))
-validation_labels = c(rep(0,train_samples/3),rep(1,train_samples/3), rep(2,train_samples/3))
 
 # Define custom fully connected layer ------------------------------------------
 
