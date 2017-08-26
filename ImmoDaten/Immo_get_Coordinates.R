@@ -9,7 +9,17 @@ df <- read.csv(paste0(path, "ImmoBerlinCleaned.csv")) #, encoding = "UTF-8")
 
 df_street <- df[df$Str!= "(missing)", ]
 
-# checken wie google Eck daten liest !!!
+# apply further cleaning
+
+# Strasse des 4. Juli hat flasche Hausnummern
+df_street$StrNo <- as.factor(gsub("4. Juli ", "", df_street$StrNo))
+df_street$StrNo <- as.factor(gsub("4 Juli ", "", df_street$StrNo))
+df_street$StrNo <- as.factor(gsub("4 Jli ", "", df_street$StrNo))
+
+# Eckhäuser nur durch eine Straße beschreiben
+x <- which(nchar(as.character(df_street$StrNo))>10)
+df_street$StrNo[x] <- substr(df_street$StrNo[x], 0, 2) 
+
 # checken wie wir am besten doppelte Adressen händeln: unique_streets <- unique(df[, c("Str","StrNo")])
 
 # Function: get Coordinates from Street Address
