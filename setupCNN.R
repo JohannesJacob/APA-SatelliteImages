@@ -8,8 +8,17 @@ library(keras)
 ## TEST directory
 train_directory <- "C:/Users/Johannes/Documents/TestImages/train"
 validation_directory <- "C:/Users/Johannes/Documents/TestImages/validation"
-#train_samples <- 9647
-#validation_samples <- 2404
+nfile <- function(path = train_directory, y) {length(list.files(paste0(path,y)))}
+train_labels = c(rep(0,nfile(y="/einfach")),
+                 rep(1,nfile(y="/gut")), 
+                 rep(2,nfile(y="/mittel")))
+validation_labels = c(rep(0,nfile(validation_directory,y="/einfach")),
+                      rep(1,nfile(validation_directory,y="/gut")), 
+                      rep(2,nfile(validation_directory,y="/mittel")))
+train_samples <- length(train_labels)
+validation_samples <- length(validation_labels)
+batch_size <- 32
+epochs <- 30
 
 #Loading images ----------------------------------------------------------------
 train_generator <- flow_images_from_directory(directory = train_directory, 
@@ -48,7 +57,12 @@ model %>% compile(optimizer = 'rmsprop', loss = 'categorical_crossentropy')
 # Training ---------------------------------------------------------------------
 
 # train the model on the new data for a few epochs
-model %>% fit_generator(train_generator, steps_per_epoch = 20)
+model %>% fit_generator(train_generator, 
+                        steps_per_epoch = ceiling(train_samples/batch_size),
+                        epochs = epochs, 
+                        validation_data = validation_generator,
+                        validation_steps = ceiling(validation_samples/batch_size),
+                        verbose=2)
 
 # at this point, the top layers are well trained and we can start fine-tuning
 # convolutional layers from ResNet. We will freeze the bottom N layers
@@ -76,8 +90,12 @@ model %>% compile(
 
 # we train our model again (this time fine-tuning the top 2 inception blocks
 # alongside the top Dense layers
-tensorboard("logs/run_a")
-history <- model %>% fit_generator(train_generator, steps_per_epoch = 20)
+history <- model %>% fit_generator(train_generator, 
+                                   steps_per_epoch = ceiling(train_samples/batch_size),
+                                   epochs = epochs, 
+                                   validation_data = validation_generator,
+                                   validation_steps = ceiling(validation_samples/batch_size),
+                                   verbose=2)
 
 
 # Saving the model results

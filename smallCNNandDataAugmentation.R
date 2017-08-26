@@ -8,8 +8,15 @@ library(keras)
 ## TEST directory
 train_directory <- "C:/Users/Johannes/Documents/SatelliteImages/train"
 validation_directory <- "C:/Users/Johannes/Documents/SatelliteImages/validation"
-train_samples <- 9647
-validation_samples <- 2404
+nfile <- function(path = train_directory, y) {length(list.files(paste0(path,y)))}
+train_labels = c(rep(0,nfile(y="/einfach")),
+                 rep(1,nfile(y="/gut")), 
+                 rep(2,nfile(y="/mittel")))
+validation_labels = c(rep(0,nfile(validation_directory,y="/einfach")),
+                      rep(1,nfile(validation_directory,y="/gut")), 
+                      rep(2,nfile(validation_directory,y="/mittel")))
+train_samples <- length(train_labels)
+validation_samples <- length(validation_labels)
 batch_size <- 32
 epochs <- 30
 
@@ -52,7 +59,7 @@ model %>%
   layer_activation("relu") %>%
   layer_dropout(0.5) %>%
   layer_dense(3) %>%
-  layer_activation("sigmoid")
+  layer_activation("softmax")
 model %>% compile(
   loss = "categorical_crossentropy",
   optimizer = optimizer_rmsprop(lr = 0.0001, decay = 1e-6),
@@ -63,10 +70,10 @@ model %>% compile(
 
 model %>% fit_generator(
   train_generator,
-  steps_per_epoch = as.integer(train_samples/batch_size), 
+  steps_per_epoch = ceiling(train_samples/batch_size), 
   epochs = epochs, 
   validation_data = validation_generator,
-  validation_steps = as.integer(validation_samples/batch_size),
+  validation_steps = ceiling(validation_samples/batch_size),
   verbose=2
 )
 
