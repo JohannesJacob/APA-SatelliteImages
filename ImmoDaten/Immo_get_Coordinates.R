@@ -9,6 +9,9 @@ df <- read.csv(paste0(path, "ImmoBerlinCleaned.csv")) #, encoding = "UTF-8")
 
 df_street <- df[df$Str!= "(missing)", ]
 
+#put lineID
+df_street$lineID <- seq(1, nrow(df_street), by = 1)
+
 # apply further cleaning
 
 # Strasse des 4. Juli hat flasche Hausnummern
@@ -36,7 +39,7 @@ geocodeAdddress <- function(address) {
   } else {
     out <- NA
   }
-  Sys.sleep(0.2)  # API only allows 5 requests per second
+  Sys.sleep(2)  # API only allows 5 requests per second
   out
 }
 
@@ -44,10 +47,17 @@ geocodeAdddress <- function(address) {
 df_street$lng <- NA
 df_street$lat <- NA
 
-for (i in 1:nrow(df_street)){
+for (i in 167:nrow(df_street)){
+  tryCatch({
   request <- paste(df_street[i, "Str"], df_street[i, "StrNo"], df_street[i, "ZIP"], "Berlin")
   df_street[i,c("lng","lat")] <- t(geocodeAdddress(request))
+  print(i)
+  print(Sys.time())
+  if(is.na(df_street$lat[i])) break
+  }, error=function(e){})
 }
+
+View(df_street[,-c(5:196)])
 
 write.csv(df_street, "Immo_streetCoordinates.csv", row.names = F, dec = ".")
 
