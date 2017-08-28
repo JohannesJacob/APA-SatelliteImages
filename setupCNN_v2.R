@@ -8,19 +8,19 @@ library(keras)
 
 # File locations and settings --------------------------------------------------
 ## TEST directory
-train_directory <- "C:/Users/Johannes/Documents/TestImages/train"
-validation_directory <- "C:/Users/Johannes/Documents/TestImages/validation"
+train_directory <- "C:/Users/Johannes/Documents/SatelliteImages/train"
+validation_directory <- "C:/Users/Johannes/Documents/SatelliteImages/validation"
 nfile <- function(path = train_directory, y) {length(list.files(paste0(path,y)))}
 train_labels = c(rep(0,nfile(y="/einfach")),
                  rep(1,nfile(y="/gut")), 
                  rep(2,nfile(y="/mittel")))
+train_samples <- length(train_labels)
 train_labels <- to_categorical(train_labels)
 validation_labels = c(rep(0,nfile(validation_directory,y="/einfach")),
                       rep(1,nfile(validation_directory,y="/gut")), 
                       rep(2,nfile(validation_directory,y="/mittel")))
-validation_labels <- to_categorical(validation_labels)
-train_samples <- length(train_labels)
 validation_samples <- length(validation_labels)
+validation_labels <- to_categorical(validation_labels)
 batch_size <- 32
 epochs <- 30
 
@@ -54,17 +54,17 @@ bottleneck_features_train <- predict_generator(model_vgg,
                                                train_generator_bottleneck, 
                                                ceiling(train_samples / batch_size),
                                                verbose = 1       ) #Important to say ceiling!!!
-saveRDS(bottleneck_features_train, "models/bottleneck_features_train_test.rds") 
+saveRDS(bottleneck_features_train, "models/bottleneck_features_train_B.rds") 
 bottleneck_features_validation <- predict_generator(model_vgg,
                                                     validation_generator_bottleneck, 
                                                     ceiling(validation_samples / batch_size),
                                                     verbose = 1  )
-saveRDS(bottleneck_features_validation, "models/bottleneck_features_validation_test.rds")
+saveRDS(bottleneck_features_validation, "models/bottleneck_features_validation_B.rds")
 
 # Loading saved transfer learning output ---------------------------------------
 
-bottleneck_features_train <- readRDS("models/bottleneck_features_train_test.rds")
-bottleneck_features_validation <- readRDS("models/bottleneck_features_validation_test.rds")
+bottleneck_features_train <- readRDS("models/bottleneck_features_train.rds")
+bottleneck_features_validation <- readRDS("models/bottleneck_features_validation.rds")
 
 # Define custom fully connected layer ------------------------------------------
 
@@ -114,7 +114,7 @@ top_model %>%
   layer_dropout(0.5) %>%
   layer_dense(3) %>%
   layer_activation("softmax")
-load_model_weights_hdf5(top_model, "models/bottleneck_30_epochsR.h5")
+load_model_weights_hdf5(top_model, "models/bottleneck_30_epochsR_IT.h5")
 model_ft <- keras_model(inputs = model_vgg$input, outputs = top_model(model_vgg$output))
 
 # Only training of a few layers ------------------------------------------------

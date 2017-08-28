@@ -4,6 +4,9 @@ library(ggmap)
 library (png)
 library(ggplot2)
 
+df_street <- read.csv("Immo_streetCoordinates.csv")
+
+
 # Loop through the images by line ## Check if any NA in long/lat
 for (i in 1:nrow(df_street)) {
   longitude     <- df_street$lng[i]
