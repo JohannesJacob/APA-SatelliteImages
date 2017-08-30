@@ -1,8 +1,8 @@
 # SAR benchmark code mit lagsarlm function
 library(spdep)
 
-df_street <- read.csv("Immo_streetCoordinates.csv")
-df_street_noNA <- df_street[complete.cases(df_street),]
+df_street_noNA <- read.csv("Immo_preProcessed.csv")
+df_street_noNA <- df_street_noNA[,-1]
 
 # Convert data frame to a spatial object
 spdf_street <- SpatialPointsDataFrame(coords = df_street_noNA[, c("lng", "lat")],
@@ -30,18 +30,30 @@ plot(nb2listw(knn.10, style="W"), coords)
 #                        nb2listw(knn.10, style="W"), method="eigen", quiet=FALSE)
 #summary(COL.lag.eig, correlation=TRUE)
 
+
+# df without multi-collinaer variables
+df_fix <- df_street_noNA[, -c(1:5,81,92,118:121,128,130,134,137:140,143,146,149,152,155:158,
+                              126, 162,165,168,171,174,177:180,186,189,192:199)]
+
+# model definition
+
+#simple ols
+lm_model <- lm(price ~.,
+               data=df_fix)
+
+#SAR model
 spdf_sar <- lagsarlm(price ~.,
-                    data=df_street_noNA[, -c(1:5,81,92,118:121,128,130,134,137:140,143,146,149,152,155:158,
-                                             126, 162,165,168,171,174,177:180,186,189,192:199)],
+                    data=df_fix,
                     nb2listw(knn.10, style="W"), tol = 1.0e-30)
 summary(spdf_sar)
-summary.sarlm(spdf_sar, Nagelkerke = T)
-# Spatial Lag is significant and some of the features
+summary.sarlm(spdf_sar, Nagelkerke = T) # Spatial Lag is significant and some of the features
 
 # Checking whether we have auto-correlation
 moran.mc(summary(spdf_sar)$residuals, nb2listw(knn.10, style="W"), 999)
-# Yes, we have autocorrelation with a significance at the 2% level
+# Yes, we have autocorrelation with a significance at the 1% level
 
-
-
+# Save the model
+saveRDS(spdf_sar, "models/sar_knn10.rds")
+saveRDS(spdf_sar, "models/sar_delauney.rds")
+saveRDS(lm_model, "models/simple_ols.rds")
 
