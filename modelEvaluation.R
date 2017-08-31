@@ -25,9 +25,12 @@ features <- readRDS("models/penultimate_pred_256.rds")
 features <- features[-119,] #outlier removed
 
 # 4. DF: Feature matrix and price
-features_immoprice <- cbind(price = df_immo$price, features)
+features_immoprice <- as.data.frame(cbind(price = df_immo$price, features))
 
-# 5. DF: HA + POI + Feature matrix
+# 5. DF: HA + Feature matrix
+df_immo_HA_features   <- cbind(df_immo_HA, features)
+
+# 6. DF: HA + POI + Feature matrix
 df_immo_features   <- cbind(df_immo, features)
 
 
@@ -41,9 +44,9 @@ message(paste("\n Registered number of cores:\n",nrOfCores,"\n"))
 #Select subset for training and testing
 set.seed(123)      
 
-inTrain    <- createDataPartition(y = df_immo$price, p = 0.8, list = FALSE) #change DF name!!!
-training   <- df_immo[inTrain,]
-testing    <- df_immo[-inTrain,]
+inTrain    <- createDataPartition(y = df_immo_features$price, p = 0.8, list = FALSE) #change DF name!!!
+training   <- df_immo_features[inTrain,]#change DF name!!!
+testing    <- df_immo_features[-inTrain,]#change DF name!!!
 
 #Setting up a 10-fold repeated cross validation
 
