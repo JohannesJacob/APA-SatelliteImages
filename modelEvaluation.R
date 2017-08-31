@@ -8,19 +8,26 @@ packages <- c("caret", "doParallel", "randomForest", "nnet", "foreach")
 
 sapply(packages, require, character.only = TRUE)
 
-# Loading Immo-data ------------------------------------------------------------
+# Loading data -----------------------------------------------------------------
 
-# 1. df_immo
-df_immo <- read.csv("Immo_preProcessed.csv")
+# 1. DF: HA + POI
+df_immo <- read.csv("Immo_fix.csv")
 df_immo <- df_immo[,-1]
+
+# 2. DF: HA (House Attributes)
+df_immo_HA <- df_immo[, 1:75]
+
+# 3. DF: POI
+df_immo_POI <- df_immo[, c(1, 76:ncol(df_immo))]
 
 # Loading feature extraction matrix
 features <- readRDS("models/penultimate_pred_256.rds")
 features <- features[-119,] #outlier removed
 
-# 2. features_immoprice
+# 4. DF: Feature matrix and price
 features_immoprice <- cbind(price = df_immo$price, features)
-# 3. df_immo_features
+
+# 5. DF: HA + POI + Feature matrix
 df_immo_features   <- cbind(df_immo, features)
 
 
@@ -34,7 +41,7 @@ message(paste("\n Registered number of cores:\n",nrOfCores,"\n"))
 #Select subset for training and testing
 set.seed(123)      
 
-inTrain    <- createDataPartition(y = df_immo$price, p = 0.8, list = FALSE) 
+inTrain    <- createDataPartition(y = df_immo$price, p = 0.8, list = FALSE) #change DF name!!!
 training   <- df_immo[inTrain,]
 testing    <- df_immo[-inTrain,]
 

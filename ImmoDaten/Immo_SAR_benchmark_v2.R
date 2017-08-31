@@ -34,6 +34,7 @@ plot(nb2listw(knn.10, style="W"), coords)
 # df without multi-collinaer variables
 df_fix <- df_street_noNA[, -c(1:5,81,92,118:121,128,130,134,137:140,143,146,149,152,155:158,
                               126, 162,165,168,171,174,177:180,186,189,192:199)]
+write.csv(df_fix, "Immo_fix.csv")
 
 # model definition
 
